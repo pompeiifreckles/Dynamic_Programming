@@ -5,21 +5,6 @@
 // canConstruct(abcdef, [ab, abc, cd, def, abcd]) -> true
 // canConstruct(skateboard, [ab, abc, cd, def, abcd]) -> false
 
-// function canConstruct(target, wordBank) {
-	// if (target == '') return true
-	
-	// for (let prefix of wordBank) {
-		// const size = prefix.length	
-		// if (target.slice(0, size) === prefix) {
-			// if (canConstruct(target.slice(size), wordBank))
-				// return true
-		// }
-	// }
-
-	// return false
-// }
-
-
 function canConstruct(target, wordBank, memo = {}) {
 	if (target in memo) return memo[target]
 	if (target == '') return true
