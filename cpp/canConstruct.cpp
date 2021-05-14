@@ -23,7 +23,7 @@ bool canConstruct(string target, const vector<string>& wordBank) {
 		for (auto word : wordBank) {
 			int size = word.size();
 			if (target.compare(0, size, word) == 0) {
-				bool result = impl(target.substr(0, target.size() - word.size()), wordBank);
+				bool result = impl(target.substr(word.size(), target.size() - word.size()), wordBank);
 				if (result) {
 					memo[target] = true;
 					return true;
