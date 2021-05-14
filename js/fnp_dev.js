@@ -1,5 +1,6 @@
 // Find G(n) if G(n) = 2*G(n) - 3*G(n-1) + G(n-3)
 // G(1) = 5, G(2) = 3, G(3) = 3
+// 0 < n < 80
 
 function funcSolver(n) {
 	if (n <= 0 || n >= 80) return null
