@@ -8,40 +8,49 @@
 // ]    
 
 #include <iostream>
+#include <functional>
+#include <algorithm>
 #include <vector>
 #include <map>
-#include <algorithm>
 
 using namespace std;
 
-vector<vector<string>> allConstruct(string target, const vector<string>& wordBank, map<string, vector<vector<string>>>& memo) {
-	map<string, vector<vector<string>>>::iterator ret_it;
-	if ((ret_it = memo.find(target)) != memo.end()) return ret_it->second;
-	if (target == "") return vector<vector<string>>(1);
+vector<vector<string>> allConstruct(string target, const vector<string>& wordBank) {
 
-	vector<vector<string>> possibleCombo;
-	for (auto word : wordBank) {
-		if (target.compare(0, word.size(), word) == 0) {
-			string suffix = target.substr(word.size(), target.size() - word.size());
-			auto suffixCombo = allConstruct(suffix, wordBank, memo);
-			for (auto& suffixWay: suffixCombo) {
-				suffixWay.insert(suffixWay.begin(), word);
-				// suffixWay.push_back(word);
-				possibleCombo.push_back(move(suffixWay));
+	function< vector<vector<string>>(string, const vector<string>&) > impl;
+	impl = [memo= map<string, vector<vector<string>>>() , &impl] (string target, const vector<string>& wordBank) mutable {
+		if (auto ret_it = memo.find(target); ret_it != memo.end()) return ret_it->second;
+		if (target == "") return vector<vector<string>>(1);
+
+		vector<vector<string>> possibleCombo;
+		for (auto word : wordBank) {
+			if (target.compare(0, word.size(), word) == 0) {
+				string suffix = target.substr(word.size(), target.size() - word.size());
+				auto suffixCombo = impl(suffix, wordBank);
+				for (auto& suffixWay: suffixCombo) {
+					suffixWay.insert(suffixWay.begin(), word);
+					// suffixWay.push_back(word);
+					possibleCombo.push_back(move(suffixWay));
+				}
 			}
 		}
-	}
 
-	auto it = memo.emplace(target, move(possibleCombo));
-	return it.first->second;
+		auto it = memo.emplace(target, move(possibleCombo));
+		return it.first->second;
+	};
+
+	return impl(target, wordBank);
+}
+
+
+vector<vector<string>> allConstruct(string target, const vector<string>&& wordBank) {
+	return allConstruct(target, wordBank);
 }
 
 int main() {
-	map<string, vector<vector<string>>> memo;
-	vector<string> wordBank {"p", "purp", "ur", "le", "purpl"};
-	auto result = allConstruct("purple", wordBank, memo);
-	// vector<string> wordBank {"e", "ee", "eee", "eeee", "eeeee", "eeeeee"};
-	// auto result = allConstruct("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef", wordBank, memo);
+	// vector<string> wordBank {"p", "purp", "ur", "le", "purpl"};
+	// auto result = allConstruct("purple", wordBank);
+	auto result = allConstruct("purple", {"p", "purp", "ur", "le", "purpl"});
 
 	for (auto& i : result) {
 		// reverse(i.begin(), i.end());
